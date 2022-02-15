@@ -11,13 +11,14 @@ import { AiPlayer } from './ai/aiPlayer'
 export function ChessBoard() {
     
     const [highlightedSquare, setHighlightedSquare] = useState([-1, -1]);
+    const [orangeSquare, setOrangeSquare] = useState([-1, -1]);
     const [game] = useState(new Game(false));
     const [gameState, setGameState] = useState(game.grid.boardArray);
     
 
     // AI Player experiment
 
-    const [opponent] = useState(new AiPlayer(game, setGameState)); // setHighlightedSquare for display purposes only
+    const [opponent] = useState(new AiPlayer(game, setGameState, setOrangeSquare)); // setHighlightedSquare for display purposes only
 
     // end experiment
 
@@ -31,7 +32,7 @@ export function ChessBoard() {
     }
 
     const makeMove = (fromPos, toPos) => {
-        game.makeMove(fromPos, toPos); //inform game model that move has been made
+        game.makeMove(game.movesDirectory[JSON.stringify([fromPos, toPos])]); //inform game model that move has been made
         setGameState(game.grid.boardArray);
         opponent.updateGame(game);
     }
@@ -67,6 +68,7 @@ export function ChessBoard() {
                                     color={getSquareColor(rowIdx, colIdx)}
                                     symbol={symbol}
                                     highlighted={rowIdx === highlightedSquare[0] && colIdx === highlightedSquare[1]}
+                                    orange={rowIdx === orangeSquare[0] && colIdx === orangeSquare[1]}
                                     // targeted={game.allEnemyTargets.map((target) => {
                                     //     return JSON.stringify(target[1])
                                     // }).includes(JSON.stringify([rowIdx, colIdx]))}

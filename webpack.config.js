@@ -20,7 +20,8 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx'],
   },
-  watch: true
+  watch: true,
+  mode: "development"
 };
 
 // module.exports = {

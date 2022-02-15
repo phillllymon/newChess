@@ -2,7 +2,7 @@ import { selectMove } from './ai';
 
 // make a new player for every game
 export class AiPlayer {
-    constructor(game, setGameState, color = 'black') {
+    constructor(game, setGameState, setOrangeSquare, color = 'black') {
         this.game = game;
         this.setGameState = setGameState; // call this with game.grid.boardArray after making a move
         this.color = color;
@@ -16,7 +16,8 @@ export class AiPlayer {
 
         this.makeMove = () => {
             const moveToMake = selectMove(this.game);
-            game.makeMove(moveToMake[0], moveToMake[1]);
+            setOrangeSquare(moveToMake[1]);
+            game.makeMove(moveToMake);
         }
     }
 }

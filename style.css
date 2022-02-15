@@ -26,6 +26,12 @@
   }
   
   .highlighted {
+    /* background-color: green; */
+    box-sizing: border-box;
+    border: 4px solid green;
+  }
+
+  .highlighted_orange {
     background-color: orange;
   }
   
