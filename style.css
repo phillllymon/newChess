@@ -39,3 +39,42 @@
     font-size: 80px;
     cursor: grab;
   }
+
+  .promotion_modal {
+    z-index: 2;
+    height: 100px;
+    width: 340px;
+    background-color: blue;
+    opacity: 1;
+    box-sizing: border-box;
+    border: 10px solid gray;
+    box-shadow: 10px 10px 30px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .modal_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal_background {
+    position: fixed;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    opacity: 0.5;
+  }
+
+  .promote_square {
+    cursor: pointer;
+  }
+
+  

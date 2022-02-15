@@ -4,10 +4,8 @@ import { Game } from '../game';
 export const purgeMoves = (dumbMoves, enemyTargets, grid, turn, inCheck, game) => {
     const moves = [];
     const kingSymbol = turn === 'black' ? 'K' : 'k';
-    const targetDirectory = {}; // we'll populate this for searching in form of {stringifiedTargetSpace: enemyTarget} (and enemyTarget itself is in form [[originRow, originCol], [targetRow, targetCol]])
-    enemyTargets.forEach((target) => {
-        targetDirectory[JSON.stringify(target[1])] = target;
-    });
+    const targetDirectory = game.targetsDirectory; // in form of {stringifiedTargetSpace: enemyTarget} (and enemyTarget itself is in form [[originRow, originCol], [targetRow, targetCol]])
+    
     dumbMoves.forEach((move) => {
         let moveIsOk = true; // set this to false if we find a way that this move is check
 
@@ -17,12 +15,14 @@ export const purgeMoves = (dumbMoves, enemyTargets, grid, turn, inCheck, game) =
         //check if we're moving a piece out of a target, potentially exposing our king
         const relevantTarget = targetDirectory[JSON.stringify(origin)];
         
-        const shortRangePieces = ['p', 'P', 'k', 'K']; // no need to follow the path of these pieces
+        const shortRangePieces = ['k', 'K']; // no need to check for king blocking check
         if (relevantTarget && !shortRangePieces.includes(grid[relevantTarget[1][0]][relevantTarget[1][1]])) {
-            const vectorToCheck = [relevantTarget[0][0] - origin[0], relevantTarget[0][1] - origin[1]];
+            // const vectorToCheck = [relevantTarget[0][0] - origin[0], relevantTarget[0][1] - origin[1]];
+            const vectorToCheck = [relevantTarget[1][0] - relevantTarget[0][0], relevantTarget[1][1] - relevantTarget[0][1]];
             const dirY = vectorToCheck[0] === 0 ? 0 : (vectorToCheck[0] > 0 ? 1 : -1);
             const dirX = vectorToCheck[1] === 0 ? 0 : (vectorToCheck[1] > 0 ? 1 : -1);
             const dir = [dirY, dirX];
+
             //go looking in that direction
             let row = origin[0];
             let col = origin[1];

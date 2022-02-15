@@ -3,7 +3,6 @@ import { purgeMoves } from './utils/purgeMoves';
 import { checkForCheck } from './utils/checkForCheck';
 import { getSpecialMoves } from './utils/getSpecialMoves';
 import { getDumbMoves } from './utils/getDumbMoves';
-import { getSpecialTargets } from './utils/getSpecialTargets';
 import { getTargets } from './utils/getTargets';
 
 const POINTS = {
@@ -24,7 +23,7 @@ const POINTS = {
 //for brand new game (Game can also be instantiated for an in-progress game by defining gameConfig)
 const DEFAULT_GAME_CONFIG = {
     grid: [
-        ['R','N','B','Q','K','B','N','R'],
+        ['R','N','B','Q','K','B','Q','R'],
         ['P','P','P','P','P','P','P','P'],
         ['-','-','-','-','-','-','-','-'],
         ['-','-','-','-','-','-','-','-'],
@@ -67,10 +66,10 @@ export class Game {
         this.allMoves = []; // all moves for current player in form of [[fromRow, fromCol], [toRow, toCol]]
         this.check = false; // if the person whose turn it is happens to be in check currently
         this.checkMate = false;
+        this.staleMate = false;
         this.whitePoints = 0; // total of points for all remaining white pieces
         this.blackPoints = 0;
-
-        this.targetsDirectory = new Set(); // allTargets with targets JSON.stringified (used for checking if a given target is present)
+        this.targetsDirectory = {};
         this.movesDirectory = {}; // allMoves with moves JSON.stringified (used for checking if a given move is in the list)
 
         // **run this function before asking for legal moves
@@ -92,11 +91,10 @@ export class Game {
                 });
             });
             dumbMoves.push(...getSpecialMoves(this));
-            enemyTargets.push(...getSpecialTargets(this));
             // set allEnemyTargets and targetsDirectory
             this.allEnemyTargets = enemyTargets;
-            this.allEnemyTargets.forEach((target) => {
-                this.targetsDirectory.add(JSON.stringify(target));
+            enemyTargets.forEach((target) => {
+                this.targetsDirectory[JSON.stringify(target[1])] = target; // form of { stringified danger space: [origin, dangerSpace] }
             });
             // set allDumbMoves
             this.allDumbMoves = dumbMoves;
@@ -111,6 +109,7 @@ export class Game {
                 this.movesDirectory[JSON.stringify([move[0], move[1]])] = move;
             });
             this.checkMate = this.check && this.allMoves.length === 0;
+            this.staleMate = !this.check && this.allMoves.length === 0;
             
             if (this.grid.at([0, 4]) !== 'K') {
                 this.blackCanCastleKingSide = false;
@@ -142,8 +141,8 @@ export class Game {
             this.checkMate = false;
             this.whitePoints = 0; // total of points for all remaining white pieces
             this.blackPoints = 0;
-            this.targetsDirectory.clear();
             this.movesDirectory = {};
+            this.targetsDirectory = {};
         }
 
         this.addPoints = (symbol) => {
@@ -159,9 +158,9 @@ export class Game {
             if (this.movesDirectory[desiredMove]) {
                 return true;
             }
-            // console.log('------------------------------------------------------------------------');
-            // console.log('illegal move');
-            // console.log('------------------------------------------------------------------------');
+            console.log('********************');
+            console.log('illegal move');
+            console.log('********************');
             return false;
         }
 
@@ -216,7 +215,6 @@ class ChessGrid {
 
         this.makeSpecialMove = (move) => {
             if (move[2] === 'castle') {
-                console.log('castle');
                 this.makeMove(move[0], move[1]);
                 const row = move[0][0];
                 const startCol = move[1][1] - move[0][1] > 0 ? 7 : 0;
@@ -227,10 +225,12 @@ class ChessGrid {
                 );
             }
             if (move[2] === 'enPassant') {
-                console.log('enPassant');
+                this.makeMove(move[0], move[1]);
+                this.boardArray[move[0][0]][move[1][1]] = '-';
             }
             if (move[2] === 'promotion') {
-                console.log('promotion');
+                this.boardArray[move[0][0]][move[0][1]] = '-';
+                this.boardArray[move[1][0]][move[1][1]] = move[3];
             }
         };
     }

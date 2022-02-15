@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Square } from './square';
+import { PromotionModal } from './promotionModal';
 import { Game } from './logic/game';
 import { AiPlayer } from './ai/aiPlayer'
 
@@ -14,6 +15,9 @@ export function ChessBoard() {
     const [orangeSquare, setOrangeSquare] = useState([-1, -1]);
     const [game] = useState(new Game(false));
     const [gameState, setGameState] = useState(game.grid.boardArray);
+
+    const [shouldShowPromotionModal, setShouldShowPromotionModal] = useState(false);
+    const [pendingPromotionMove, setPendingPromotionMove] = useState([]);
     
 
     // AI Player experiment
@@ -26,7 +30,12 @@ export function ChessBoard() {
         //check if there is a highlighted square at all
         if (fromPos[0] > -1) {
             if (game.isMoveLegal(fromPos, toPos)){
-                makeMove(fromPos, toPos);
+                if (game.movesDirectory[JSON.stringify([fromPos, toPos])][2] === 'promotion') { // see if we need to prompt for promotion choice
+                    setPendingPromotionMove([fromPos, toPos, 'promotion']);
+                    setShouldShowPromotionModal(true);
+                } else {
+                    makeMove(fromPos, toPos);
+                }
             }
         }
     }
@@ -35,6 +44,20 @@ export function ChessBoard() {
         game.makeMove(game.movesDirectory[JSON.stringify([fromPos, toPos])]); //inform game model that move has been made
         setGameState(game.grid.boardArray);
         opponent.updateGame(game);
+        // setTimeout(() => {
+        //     opponent.updateGame(game);
+        //     setGameState(game.grid.boardArray);
+        // }, 1000);
+    }
+
+    const makePromotionMove = (move) => {
+        game.makeMove(move);
+        setGameState(game.grid.boardArray);
+        opponent.updateGame(game);
+        // setTimeout(() => {
+        //     opponent.updateGame(game);
+        //     setGameState(game.grid.boardArray);
+        // }, 1000);
     }
 
     const toggleSquare = (rowIdx, colIdx) => {
@@ -48,6 +71,10 @@ export function ChessBoard() {
 
     if (game.checkMate) {
         alert('Checkmate!');
+    }
+
+    if (game.staleMate) {
+        alert('Stalemate :/');
     }
     
     return (
@@ -79,6 +106,15 @@ export function ChessBoard() {
                     })
                 }
             </div>
+            {shouldShowPromotionModal && 
+                <PromotionModal 
+                    pieceOptions={game.turn === 'white' ? ['q', 'r', 'b', 'n'] : ['Q', 'R', 'B', 'N']}
+                    move={pendingPromotionMove}
+                    makePromotionMove={makePromotionMove}
+                    setShouldShowPromotionModal={setShouldShowPromotionModal}
+                />
+            }
+            
         </>
     );
 }
