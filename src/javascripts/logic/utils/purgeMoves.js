@@ -63,7 +63,7 @@ export const purgeMoves = (dumbMoves, enemyTargets, grid, turn, inCheck, game) =
                 whiteCanCastleQueenSide: game.whiteCanCastleQueenSide,
                 blackCanCastleKingSide: game.blackCanCastleKingSide,
                 blackCanCastleQueenSide: game.blackCanCastleQueenSide,
-                enPassantMoves : game.enPassantMoves
+                previousMove : game.previousMove
             });
 
             testGame.testMove([origin, dest]);

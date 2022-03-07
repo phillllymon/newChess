@@ -43,21 +43,19 @@ export function ChessBoard() {
     const makeMove = (fromPos, toPos) => {
         game.makeMove(game.movesDirectory[JSON.stringify([fromPos, toPos])]); //inform game model that move has been made
         setGameState(game.grid.boardArray);
-        opponent.updateGame(game);
-        // setTimeout(() => {
-        //     opponent.updateGame(game);
-        //     setGameState(game.grid.boardArray);
-        // }, 1000);
+        setTimeout(() => {
+            opponent.updateGame(game);
+            setGameState(game.grid.boardArray);
+        }, 0);
     }
 
     const makePromotionMove = (move) => {
         game.makeMove(move);
         setGameState(game.grid.boardArray);
-        opponent.updateGame(game);
-        // setTimeout(() => {
-        //     opponent.updateGame(game);
-        //     setGameState(game.grid.boardArray);
-        // }, 1000);
+        setTimeout(() => {
+            opponent.updateGame(game);
+            setGameState(game.grid.boardArray);
+        }, 0);
     }
 
     const toggleSquare = (rowIdx, colIdx) => {

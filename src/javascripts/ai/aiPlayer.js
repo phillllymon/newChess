@@ -16,8 +16,8 @@ export class AiPlayer {
 
         this.makeMove = () => {
             const moveToMake = selectMove(this.game);
-            setOrangeSquare(moveToMake[1]);
             game.makeMove(moveToMake);
+            setOrangeSquare(moveToMake[1]);
         }
     }
 }

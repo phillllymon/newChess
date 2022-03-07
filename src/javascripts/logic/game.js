@@ -23,7 +23,7 @@ const POINTS = {
 //for brand new game (Game can also be instantiated for an in-progress game by defining gameConfig)
 const DEFAULT_GAME_CONFIG = {
     grid: [
-        ['R','N','B','Q','K','B','Q','R'],
+        ['R','N','B','Q','K','B','N','R'],
         ['P','P','P','P','P','P','P','P'],
         ['-','-','-','-','-','-','-','-'],
         ['-','-','-','-','-','-','-','-'],
@@ -49,7 +49,32 @@ const DEFAULT_GAME_CONFIG = {
 }
 
 export class Game {
-    constructor(testGame, gameConfig = DEFAULT_GAME_CONFIG) {
+    constructor(testGame, gameConfig = {
+        grid: [
+            ['R','N','B','Q','K','B','N','R'],
+            ['P','P','P','P','P','P','P','P'],
+            ['-','-','-','-','-','-','-','-'],
+            ['-','-','-','-','-','-','-','-'],
+            ['-','-','-','-','-','-','-','-'],
+            ['-','-','-','-','-','-','-','-'],
+            ['p','p','p','p','p','p','p','p'],
+            ['r','n','b','q','k','b','n','r']
+            // ['-','-','-','R','K','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','-','-','-','-','-'],
+            // ['-','-','-','r','k','-','-','-']
+        ],
+        turn: 'white',
+        whiteCanCastleKingSide : true,
+        whiteCanCastleQueenSide : true,
+        blackCanCastleKingSide : true,
+        blackCanCastleQueenSide : true,
+        previousMove : null
+    }) {
         this.grid = new ChessGrid(gameConfig.grid);
 
         // --game variables--
